@@ -7,6 +7,7 @@ import {
   formatJpDate,
   formatJpyAmount,
   formatKeyRatios,
+  formatLargeShareholding,
 } from './formatters.js';
 
 describe('formatJpyAmount', () => {
@@ -73,5 +74,16 @@ describe('financial formatter passthrough', () => {
 
   test('preserves preformatted earnings markdown', () => {
     expect(formatEarnings('earnings calendar')).toBe('earnings calendar');
+  });
+
+  test('renders large-shareholding tables and sync hints', () => {
+    const formatted = formatLargeShareholding({
+      table: '| 提出日 | 提出者 |\n|---|---|\n| 2026-04-03 | ブラックロック |',
+      missing_dates: ['2026-04-02'],
+    });
+
+    expect(formatted).toContain('| 提出日 | 提出者 |');
+    expect(formatted).toContain('未同期日');
+    expect(formatLargeShareholding('already formatted')).toBe('already formatted');
   });
 });

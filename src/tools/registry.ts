@@ -9,6 +9,7 @@ import { writeFileTool, WRITE_FILE_DESCRIPTION } from './filesystem/write-file.j
 import { editFileTool, EDIT_FILE_DESCRIPTION } from './filesystem/edit-file.js';
 import { GET_FINANCIALS_DESCRIPTION } from './finance/get-financials.js';
 import { GET_MARKET_DATA_DESCRIPTION } from './finance/get-market-data.js';
+import { syncLargeShareholding, SYNC_LARGE_SHAREHOLDING_DESCRIPTION } from './finance/large-shareholding.js';
 import { READ_FILINGS_DESCRIPTION } from './finance/read-filings.js';
 import { heartbeatTool, HEARTBEAT_TOOL_DESCRIPTION } from './heartbeat/heartbeat-tool.js';
 import { cronTool, CRON_TOOL_DESCRIPTION } from './cron/cron-tool.js';
@@ -60,6 +61,13 @@ export function getToolRegistry(model: string): RegisteredTool[] {
       description: READ_FILINGS_DESCRIPTION,
       compactDescription: '日本企業のIR書類を EDINET / TDnet / 公式IR 優先で探し、読み込み方針を返す。',
       concurrencySafe: true,
+    },
+    {
+      name: 'sync_large_shareholding_reports',
+      tool: syncLargeShareholding,
+      description: SYNC_LARGE_SHAREHOLDING_DESCRIPTION,
+      compactDescription: 'EDINET から大量保有報告書を日次取得・蓄積する。query の前に呼ぶ。',
+      concurrencySafe: false,
     },
     {
       name: 'web_fetch',

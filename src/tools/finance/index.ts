@@ -28,8 +28,9 @@ export {
   get8KFilingItems,
 } from './filings.js';
 
-// JP-specific filing / holdings tools
-export { getInsiderHoldings } from './insider-holdings.js';
+// Large shareholding (EDINET API)
+export { syncLargeShareholding, queryLargeShareholding } from './large-shareholding.js';
+export type { LargeShareholdingDoc, QueryResult, SyncResult } from './large-shareholding.js';
 
 // Meta tools
 export { createGetFinancials } from './get-financials.js';
