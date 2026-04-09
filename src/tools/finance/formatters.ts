@@ -172,6 +172,39 @@ export function formatStockPrices(data: unknown): string {
   return lines.join('\n');
 }
 
+export function formatLargeShareholding(data: unknown): string {
+  if (typeof data === 'string') return data;
+  const d = data && typeof data === 'object' ? (data as Rec) : {};
+  const docs = Array.isArray(d.docs) ? (d.docs as Rec[]) : [];
+  const missingDates = Array.isArray(d.missing_dates)
+    ? d.missing_dates.filter((value): value is string => typeof value === 'string')
+    : [];
+
+  let body: string;
+  if (typeof d.table === 'string') {
+    body = d.table;
+  } else if (docs.length > 0) {
+    const lines = [
+      '| 提出日 | 提出者 | 対象企業 | コード | 書類 |',
+      '|---|---|---|---|---|',
+    ];
+    for (const doc of docs) {
+      lines.push(
+        `| ${String(doc.submitDateTime ?? '').slice(0, 10)} | ${doc.filerName ?? '—'} | ${doc.companyName || doc.edinetCode || '—'} | ${doc.tickerCode ?? '—'} | ${doc.docDescription ?? '—'} |`,
+      );
+    }
+    body = lines.join('\n');
+  } else {
+    body = typeof d.message === 'string' ? d.message : '大量保有報告書データなし';
+  }
+
+  if (missingDates.length === 0) {
+    return body;
+  }
+
+  return `${body}\n\n※ 未同期日: ${missingDates.join(', ')}。必要なら sync_large_shareholding_reports を先に実行してください。`;
+}
+
 export function formatAnalystEstimates(data: unknown): string {
   const items = Array.isArray(data) ? data : [];
   if (items.length === 0) return 'No analyst estimates available.';
@@ -233,6 +266,7 @@ export const MARKET_DATA_FORMATTERS: Record<string, (data: unknown, args?: Rec) 
   get_stock_price: formatStockPrice,
   get_stock_price_snapshot: formatStockPrice,
   get_stock_prices: formatStockPrices,
+  query_large_shareholding_reports: formatLargeShareholding,
 };
 
 // ---------------------------------------------------------------------------

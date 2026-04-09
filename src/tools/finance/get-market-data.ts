@@ -6,8 +6,8 @@ import { callLlm } from '../../model/llm.js';
 import { getCurrentDate } from '../../agent/prompts.js';
 import { formatToolResult } from '../types.js';
 import { MARKET_DATA_FORMATTERS } from './formatters.js';
-import { getInsiderHoldings } from './insider-holdings.js';
 import { getInvestorTrading } from './investor-trading.js';
+import { queryLargeShareholding } from './large-shareholding.js';
 import { getListedIssues } from './listed-issues.js';
 import { getMarginTrading } from './margin-trading.js';
 import { getStockPrice } from './stock-price.js';
@@ -21,7 +21,7 @@ export const GET_MARKET_DATA_DESCRIPTION = `
 - 株価（始値・終値・高値・安値・出来高）の取得
 - 信用取引残高・貸借倍率の確認
 - 投資家別売買動向（外国人・個人・機関投資家）の確認
-- 大量保有報告書・役員持分の確認
+- 大量保有報告書の確認・履歴検索（銘柄別・提出者別）
 - 上場銘柄の検索・証券コード確認
 
 ## 使うべきでないとき
@@ -81,7 +81,7 @@ const MARKET_DATA_TOOLS: StructuredToolInterface[] = [
   getStockPrice,
   getMarginTrading,
   getInvestorTrading,
-  getInsiderHoldings,
+  queryLargeShareholding,
   getListedIssues,
 ];
 
@@ -98,7 +98,7 @@ ${JP_TICKER_EXAMPLES}
 - get_stock_price: 株価（始値・終値・出来高）の取得
 - get_margin_trading: 信用取引残高・貸借倍率の取得
 - get_investor_trading: 投資家別売買動向の取得
-- get_insider_holdings: 大量保有報告書・役員持分の取得
+- query_large_shareholding_reports: 大量保有報告書の検索（銘柄別・提出者別の履歴）
 - get_listed_issues: 上場銘柄・証券コードの検索
 
 回答は日本語で、必要なツールだけを選んで実行すること。`;
